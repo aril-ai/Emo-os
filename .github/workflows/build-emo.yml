@@ -35,17 +35,21 @@ jobs:
         run: |
           unzip meta-emo.zip -d asteroid/src/
           
+          # [TRIK PERBAIKAN]: Merapikan folder yang tercecer dari ZIP
+          mkdir -p asteroid/src/meta-emo/recipes-core/emo-core-kiosk
+          mv asteroid/src/meta-emo/recipes-core/emo-core-kiosk.bb asteroid/src/meta-emo/recipes-core/emo-core-kiosk/
+          mv asteroid/src/meta-emo/recipes-core/files asteroid/src/meta-emo/recipes-core/emo-core-kiosk/
+          
           cd asteroid
-          # Perintah ini otomatis memasukkan kita ke folder build
           source ./prepare-build.sh sturgeon
           
-          # Langsung eksekusi perintah BitBake
+          cd build
           bitbake-layers add-layer ../src/meta-emo
           echo 'IMAGE_INSTALL:append = " emo-core-kiosk emo-kiosk-runner"' >> conf/local.conf
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           
-          # Mulai proses perakitan
           bitbake asteroid-image
+
 
 
       - name: Upload EMO OS Image
