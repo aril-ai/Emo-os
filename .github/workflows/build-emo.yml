@@ -1,0 +1,56 @@
+name: Build EMO OS (AsteroidOS)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-yocto:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Free up disk space for Yocto
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git python3 chrpath diffstat lz4 gawk wget cpio build-essential unzip
+
+      - name: Clone AsteroidOS
+        run: git clone https://github.com/AsteroidOS/asteroid.git
+
+      - name: Compile EMO OS
+        run: |
+          # Ekstrak file ZIP EMO dari repositori ke dalam source AsteroidOS
+          unzip meta-emo.zip -d asteroid/src/
+          
+          cd asteroid
+          source ./prepare-build.sh sturgeon
+          
+          cd build
+          bitbake-layers add-layer ../src/meta-emo
+          echo 'IMAGE_INSTALL:append = " emo-core-kiosk emo-kiosk-runner"' >> conf/local.conf
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          
+          # Mulai proses perakitan
+          bitbake asteroid-image
+
+      - name: Upload EMO OS Image
+        uses: actions/upload-artifact@v3
+        with:
+          name: EMO-Watch-Image
+          path: asteroid/build/tmp/deploy/images/sturgeon/asteroid-image-sturgeon.ext2
+          retention-days: 7
+
