@@ -21,7 +21,7 @@ jobs:
           swap-storage: true
 
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Build Dependencies
         run: |
@@ -33,7 +33,6 @@ jobs:
 
       - name: Compile EMO OS
         run: |
-          # Ekstrak file ZIP EMO dari repositori ke dalam source AsteroidOS
           unzip meta-emo.zip -d asteroid/src/
           
           cd asteroid
@@ -44,13 +43,11 @@ jobs:
           echo 'IMAGE_INSTALL:append = " emo-core-kiosk emo-kiosk-runner"' >> conf/local.conf
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           
-          # Mulai proses perakitan
           bitbake asteroid-image
 
       - name: Upload EMO OS Image
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: EMO-Watch-Image
           path: asteroid/build/tmp/deploy/images/sturgeon/asteroid-image-sturgeon.ext2
           retention-days: 7
-
