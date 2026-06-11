@@ -36,14 +36,17 @@ jobs:
           unzip meta-emo.zip -d asteroid/src/
           
           cd asteroid
+          # Perintah ini otomatis memasukkan kita ke folder build
           source ./prepare-build.sh sturgeon
           
-          cd build
+          # Langsung eksekusi perintah BitBake
           bitbake-layers add-layer ../src/meta-emo
           echo 'IMAGE_INSTALL:append = " emo-core-kiosk emo-kiosk-runner"' >> conf/local.conf
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           
+          # Mulai proses perakitan
           bitbake asteroid-image
+
 
       - name: Upload EMO OS Image
         uses: actions/upload-artifact@v4
