@@ -40,16 +40,19 @@ jobs:
           mv asteroid/src/meta-emo/recipes-core/emo-core-kiosk.bb asteroid/src/meta-emo/recipes-core/emo-core-kiosk/
           mv asteroid/src/meta-emo/recipes-core/files asteroid/src/meta-emo/recipes-core/emo-core-kiosk/
           
+          # [TRIK HACKER]: Hapus teks nama paket baterai yang bikin Yocto ngambek
+          sed -i 's/nemo-qml-plugin-mce//g' asteroid/src/meta-emo/recipes-core/emo-core-kiosk/emo-core-kiosk.bb
+          sed -i 's/nemo-qml-plugin-mce//g' asteroid/src/meta-emo/recipes-qt/emo-kiosk-runner/emo-kiosk-runner.bb
+          
           cd asteroid
-          # Perintah ini otomatis memasukkan kita ke folder build
           source ./prepare-build.sh sturgeon
           
-          # LANGSUNG EKSEKUSI TANPA 'cd build'
           bitbake-layers add-layer ../src/meta-emo
           echo 'IMAGE_INSTALL:append = " emo-core-kiosk emo-kiosk-runner"' >> conf/local.conf
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           
           bitbake asteroid-image
+
 
 
 
