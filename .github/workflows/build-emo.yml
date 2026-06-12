@@ -45,6 +45,14 @@ jobs:
           sed -i 's/nemo-qml-plugin-mce//g' asteroid/src/meta-emo/recipes-qt/emo-kiosk-runner/emo-kiosk-runner.bb
           sed -i 's/qt5-plugin-platform-hwcomposer//g' asteroid/src/meta-emo/recipes-qt/emo-kiosk-runner/emo-kiosk-runner.bb
           
+          # [PEMBERSIH COPY-PASTE AI]: Menghapus simbol markdown (```) yang tidak sengaja terbawa!
+          sed -i 's/```cmake//g' asteroid/src/meta-emo/recipes-qt/emo-kiosk-runner/files/CMakeLists.txt || true
+          sed -i 's/```cpp//g' asteroid/src/meta-emo/recipes-qt/emo-kiosk-runner/files/main.cpp || true
+          sed -i 's/```//g' asteroid/src/meta-emo/recipes-qt/emo-kiosk-runner/files/CMakeLists.txt || true
+          sed -i 's/```//g' asteroid/src/meta-emo/recipes-qt/emo-kiosk-runner/files/main.cpp || true
+          sed -i 's/```qml//g' asteroid/src/meta-emo/recipes-core/emo-core-kiosk/files/*.qml || true
+          sed -i 's/```//g' asteroid/src/meta-emo/recipes-core/emo-core-kiosk/files/*.qml || true
+
           # [HOOK SAPU JAGAT]: Paksa Yocto menyalin file QML dari sumber aslinya!
           echo 'do_install:prepend() {' >> asteroid/src/meta-emo/recipes-core/emo-core-kiosk/emo-core-kiosk.bb
           echo '    cp -r ${THISDIR}/files/* ${WORKDIR}/ || true' >> asteroid/src/meta-emo/recipes-core/emo-core-kiosk/emo-core-kiosk.bb
@@ -59,6 +67,7 @@ jobs:
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           
           bitbake asteroid-image
+
 
 
       - name: Upload EMO OS Image
